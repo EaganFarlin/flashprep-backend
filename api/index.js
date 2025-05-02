@@ -1,7 +1,7 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const { Pool } = require('pg');
-const express = require('express');
+const { Pool } = require("pg");
+const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
@@ -15,9 +15,9 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-app.get('/', async (_, res) => {
+app.get("/", async (_, res) => {
   const client = await pool.connect();
-  const result = await client.query('SELECT version()');
+  const result = await client.query("SELECT version()");
   client.release();
   const { version } = result.rows[0];
   res.json({ version });
@@ -34,25 +34,27 @@ app.get("/:table", async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Database error');
-  } 
+    res.status(500).send("Database error");
+  }
 });
 
 app.get("/:table/:col/:col_val", async (req, res) => {
   try {
-    const result = await pool.query(`Select * from ${req.params.table} where ${req.params.col}='${req.params.col_val}'`);
+    const result = await pool.query(
+      `Select * from ${req.params.table} where ${req.params.col}='${req.params.col_val}'`,
+    );
 
     res.json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Database error');
+    res.status(500).send("Database error");
   }
 });
 
 app.post("/sets/new", async (req, res) => {
-  try {
-    const client = await pool.connect();
+  const client = await pool.connect();
 
+  try {
     const newSet = req.body;
 
     const set = newSet.set;
