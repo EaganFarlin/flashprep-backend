@@ -29,7 +29,7 @@ app.listen(PORT, () => {
 
 app.get("/:table", async (req, res) => {
   try {
-    const result = await pool.query(`Select * from ${req.params.table}`);
+    const result = await pool.query("Select * from $1", [req.params.table]);
 
     res.json(result.rows);
   } catch (err) {
@@ -40,9 +40,11 @@ app.get("/:table", async (req, res) => {
 
 app.get("/:table/:col/:col_val", async (req, res) => {
   try {
-    const result = await pool.query(
-      `Select * from ${req.params.table} where ${req.params.col}='${req.params.col_val}'`,
-    );
+    const result = await pool.query("Select * from $1 where $2='$3'", [
+      req.params.table,
+      req.params.col,
+      req.params.col_val,
+    ]);
 
     res.json(result.rows);
   } catch (err) {
